@@ -22,7 +22,7 @@ public class UrlController {
     @Value("${app.base-url}")
     private String baseUrl;
 
-    @PostMapping("api/shorten")
+    @PostMapping("/api/shorten")
     public ResponseEntity<ShortenResponseDTO> createShortUrl(@Valid @RequestBody ShortenRequestDTO request)
     {
         String code=service.createShortUrl(request.longUrl());
