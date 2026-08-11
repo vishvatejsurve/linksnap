@@ -8,12 +8,13 @@ import com.vishvatej.url_shortener.util.Base62Encoder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.Optional;
+
 
 @Service
 @RequiredArgsConstructor
@@ -22,6 +23,8 @@ public class ShortUrlServiceImpl implements ShortUrlService {
 
     private final ShortUrlRepository repository;
     private final StringRedisTemplate redisTemplate;
+    private final ClickCountAsyncService clickCountAsyncService;
+
 
     private static final String CACHE_PREFIX="shorturl:";
     private static final Duration CACHE_TTL=Duration.ofHours(24);
@@ -62,14 +65,9 @@ public class ShortUrlServiceImpl implements ShortUrlService {
 
             redisTemplate.opsForValue().set(cacheKey,longUrl,CACHE_TTL);
         }
-        incrementClickCount(code);
+        clickCountAsyncService.incrementClickCountAsync(code);
        return longUrl;
     }
 
-    private void incrementClickCount(String code)
-    {
-        repository.findByShortCode(code).ifPresent(entity-> {entity.setClickCount(entity.getClickCount()+1);
-        repository.save(entity);
-        });
-    }
+
 }
