@@ -1,6 +1,5 @@
 package com.vishvatej.url_shortener.config;
 
-import com.vishvatej.url_shortener.service.impl.RateLimiterService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
